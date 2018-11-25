@@ -35,7 +35,6 @@ class Problem():
                  name='',
                  points=0,
                  manual=False):
-        """manual - manually edited problem"""
         self.tag = tag
         self.deadline = deadline
         self.languages = languages
@@ -46,7 +45,6 @@ class Problem():
 
 class Student():
     def __init__(self, nick, name='brak', number='brak', problems=None):
-        "docstring"
         self.name = name
         self.nick = nick
         self.number = number
@@ -61,7 +59,6 @@ class Student():
 
 class AdjuleManager():
     def __init__(self, driver, login, group, problems_path, marks_path):
-        "docstring"
         self.driver = driver
         self.login = login
         self.group_url = f'https://adjule.pl/groups/{group}'
@@ -313,12 +310,6 @@ ppr12\t21.12.18\tc""")
         '--debug',
         action='store_true',
         help='Log debug information. Default: Don\'t log debug info.')
-    # headless_parser = parser.add_mutually_exclusive_group(required=False)
-    # headless_parser.add_argument(
-    #     '--headless',
-    #     dest='headless',
-    #     action='store_true',
-    # help='Runs browser in headless mode, without GUI).')
     parser.add_argument(
         '--no-headless',
         dest='headless',
