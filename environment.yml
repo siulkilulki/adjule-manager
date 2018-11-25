@@ -1,0 +1,8 @@
+name: adjule
+dependencies:
+  - python>=3.6
+  - selenium
+  - pip:
+      - dateparser
+      - chromedriver-binary
+      - progressbar2
