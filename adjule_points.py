@@ -143,10 +143,11 @@ class AdjuleManager():
             EC.presence_of_element_located((By.CSS_SELECTOR,
                                             'ul.no-bullet a.profilename')))
         profile_name = profile_name_element.text
-        profile_name_array = profile_name.split()
-        if len(profile_name_array) == 3:
-            name = '{} {}'.format(profile_name_array[0], profile_name_array[2])
-            nick = profile_name_array[1].strip("'").rstrip("'")
+        if "'" in profile_name:
+            profile_name_array = profile_name.split("'")
+            name = '{} {}'.format(profile_name_array[0].strip(),
+                                  profile_name_array[2].strip())
+            nick = profile_name_array[1].strip()
         else:
             nick = profile_name
             name = 'brak'
