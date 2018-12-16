@@ -243,7 +243,11 @@ class AdjuleManager():
         with open(self.marks_path, 'w') as f:
             print('Student\tNick\tNumer indeksu\t', end='', file=f)
             for problem in self.problems:
-                print(f'{problem.name} ({problem.tag})\t', end='', file=f)
+                languages = ','.join(problem.languages)
+                print(
+                    f'{problem.name} ({problem.tag}) {languages}\t',
+                    end='',
+                    file=f)
             print('Suma', file=f)
             for student in self.students:
                 suma = 0
