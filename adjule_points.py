@@ -221,7 +221,7 @@ class AdjuleManager():
         with open(self.marks_path) as f:
             header = next(f).rstrip('\n').split('\t')
             for i, val in enumerate(header):
-                problem_tag = re.search('[^(]+ \((.+)\)$', val)
+                problem_tag = re.search('[^(]+ \((.+)\) [^(]+$', val)
                 if problem_tag:
                     header[i] = problem_tag.group(1)
             for line in f:
@@ -233,7 +233,7 @@ class AdjuleManager():
                         problem_tag = header[col_nr]
                         problem = student.find_problem_by_tag(problem_tag)
                         problem.manual = True
-                        problem.points = int(val.rstrip('*'))
+                        problem.points = int(val.strip('*'))
 
     def update_marks(self):
         if os.path.isfile(self.marks_path):
