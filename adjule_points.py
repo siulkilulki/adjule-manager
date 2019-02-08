@@ -233,7 +233,7 @@ class AdjuleManager():
                         problem_tag = header[col_nr]
                         problem = student.find_problem_by_tag(problem_tag)
                         problem.manual = True
-                        problem.points = int(val.strip('*'))
+                        problem.points = float(val.strip('*'))
 
     def update_marks(self):
         if os.path.isfile(self.marks_path):
