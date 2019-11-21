@@ -14,7 +14,8 @@ from string import Template
 import dateparser
 import progressbar
 from selenium import webdriver
-from selenium.common.exceptions import StaleElementReferenceException
+from selenium.common.exceptions import (StaleElementReferenceException,
+                                        TimeoutException)
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
@@ -122,6 +123,7 @@ class AdjuleManager():
         students_urls = []
         last_page = False
         while not last_page:
+            time.sleep(1)
             page_urls = self.get_students_urls_on_page()
             students_urls.extend(page_urls)
             next_button = self.driver.find_element_by_css_selector(
@@ -129,8 +131,9 @@ class AdjuleManager():
             if next_button.get_attribute('class') == 'disabled':
                 last_page = True
             else:
+                self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+                next_button = WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'li.pagination-next > button')))
                 next_button.click()
-                time.sleep(1)
         students_urls = sorted(
             list(set(students_urls))
         )  #adjule sometimes fuck up, so we make sure students are unique
@@ -183,8 +186,15 @@ class AdjuleManager():
             url = self.submission_template.substitute(
                 user=student.nick, problem_tag=problem.tag, page_nr=page_nr)
             self.driver.get(url)
-            accepted_submissions = self.driver.find_elements_by_css_selector(
-                'table.submissions tr.acc')
+            acc_sub_selector = 'table.submissions tr.acc'
+            try:
+                WebDriverWait(self.driver, 5).until(
+                    EC.presence_of_element_located((By.CSS_SELECTOR,
+                                                   acc_sub_selector)))
+            except TimeoutException:
+                # probably no submission
+                pass
+            accepted_submissions = self.driver.find_elements_by_css_selector(acc_sub_selector)
             if not accepted_submissions:
                 exist_submission = False
             for acc_sub in accepted_submissions:
