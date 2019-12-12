@@ -258,20 +258,24 @@ class AdjuleManager():
                     f'{problem.name} ({problem.tag}) {languages}\t',
                     end='',
                     file=f)
-            print('Suma', file=f)
+            print('Suma\tKolokwium', file=f)
             for student in self.students:
                 suma = 0
+                suma_kol = 0
                 print(
                     f'{student.name}\t{student.nick}\t{student.number}\t',
                     end='',
                     file=f)
                 for problem in student.problems:
-                    suma += problem.points
+                    if re.search('[Kk]olokwium', problem.name):
+                        suma_kol += problem.points
+                    else:
+                        suma += problem.points
                     if problem.manual:
                         print(f'{problem.points}*\t', end='', file=f)
                     else:
                         print(f'{problem.points}\t', end='', file=f)
-                print(suma, file=f)
+                print(f'{suma}\t{suma_kol}', file=f)
 
     def backup_marks(self, marks_backup_path=None):
         if marks_backup_path == None:
