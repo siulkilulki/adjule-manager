@@ -14,7 +14,8 @@ from string import Template
 import dateparser
 import progressbar
 from selenium import webdriver
-from selenium.common.exceptions import StaleElementReferenceException, TimeoutException
+from selenium.common.exceptions import (StaleElementReferenceException,
+                                        TimeoutException)
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
@@ -52,6 +53,8 @@ class Student:
         for p in self.problems:
             if p.tag == problem_tag:
                 return p
+        import ipdb; ipdb.set_trace()
+        pass
 
 
 class AdjuleManager:
@@ -87,7 +90,7 @@ class AdjuleManager:
         for problem in progressbar.progressbar(self.problems):
             if problem.tag.endswith("*"):
                 problem.name = problem.tag
-                problem.tag = "manual"
+                problem.manual = True
                 continue
             self.driver.get(f"{self.group_url}/problems/{problem.tag}")
             while not problem.name:
@@ -197,7 +200,7 @@ class AdjuleManager:
     def evaluate_problem(self, student, problem):
         problem = copy.copy(problem)
         problem.points = 0
-        if problem.tag == "manual":
+        if problem.manual:
             return problem
         exist_submission = True
         page_nr = 0
@@ -253,6 +256,7 @@ class AdjuleManager:
                 return student
 
     def update_student_problems_with_manual_marks(self):
+        # TODO: this function is too error prone...
         logger.info("Updating students with manual marks...")
         with open(self.marks_path) as f:
             header = next(f).rstrip("\n").split("\t")
@@ -266,10 +270,11 @@ class AdjuleManager:
                 student = self.find_student_by_nick(nick)
                 for col_nr, val in enumerate(row):
                     if "*" in val:
-                        problem_tag = header[col_nr]
+                        problem_tag = header[col_nr].split(',')[0]
                         problem = student.find_problem_by_tag(problem_tag)
-                        problem.manual = True
-                        problem.points = float(val.strip("*"))
+                        if problem:
+                            problem.manual = True
+                            problem.points = float(val.strip("*"))
 
     def update_marks(self):
         if os.path.isfile(self.marks_path):
